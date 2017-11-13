@@ -1,7 +1,7 @@
 -- Q4.PIG: Which are common expressions of online anger?
 
 REGISTER ./tutorial.jar
-Tweets = LOAD './woman/tweets.csv' using PigStorage(',') as (
+Tweets = LOAD 'hdfs://master:54310/user/hduser/twitter/womensday/tweets' using PigStorage(',') as (
       id: chararray, 
       text: chararray, 
       created_at: chararray, 
@@ -25,4 +25,6 @@ Grouped = GROUP Ngram BY (ngram);
 Frequency = FOREACH Grouped GENERATE group, COUNT(Ngram) as count;
 MostUsed = FILTER Frequency BY count > 20;
 Result = ORDER MostUsed BY count DESC;
-STORE @ INTO '4_common_expressions';
+-- STORE @ INTO '4_common_expressions';
+Top10 = LIMIT Result 10;
+DUMP @;

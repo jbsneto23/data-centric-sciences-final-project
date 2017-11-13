@@ -1,6 +1,6 @@
 -- Q2. PIG: Who are those who send abusive tweets?
 
-Tweets = LOAD './woman/tweets.csv' using PigStorage(',') as (
+Tweets = LOAD 'hdfs://master:54310/user/hduser/twitter/womensday/tweets' using PigStorage(',') as (
       id: chararray, 
       text: chararray, 
       created_at: chararray, 
@@ -18,7 +18,7 @@ Tweets = LOAD './woman/tweets.csv' using PigStorage(',') as (
 );
 UserIds = FOREACH Tweets GENERATE user_id;
 UserIds = DISTINCT UserIds;
-Users = LOAD './woman/users.csv' using PigStorage(',') as (
+Users = LOAD 'hdfs://master:54310/user/hduser/twitter/womensday/users' using PigStorage(',') as (
       id: chararray, 
       name: chararray, 
       screen_name: chararray, 
@@ -41,4 +41,6 @@ Users = LOAD './woman/users.csv' using PigStorage(',') as (
 Result = JOIN Users BY id, UserIds BY user_id;
 Result = FOREACH Result GENERATE id, name, screen_name;
 Result = DISTINCT Result;
-STORE @ INTO '2_Sending_Users';
+-- STORE @ INTO '2_Sending_Users';
+Top10 = LIMIT Result 10;
+DUMP @;

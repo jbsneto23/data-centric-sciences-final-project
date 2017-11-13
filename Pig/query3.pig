@@ -1,6 +1,6 @@
 -- Q3. PIG: What is the volume of abusive tweets per perpetrator?
 
-Users = LOAD './woman/users.csv' using PigStorage(',') as (
+Users = LOAD 'hdfs://master:54310/user/hduser/twitter/womensday/users' using PigStorage(',') as (
       id: chararray, 
       name: chararray, 
       screen_name: chararray, 
@@ -22,7 +22,7 @@ Users = LOAD './woman/users.csv' using PigStorage(',') as (
 );
 UserInfo = FOREACH Users GENERATE id, screen_name; 
 UniqUsers = DISTINCT UserInfo;
-Tweets = LOAD './woman/tweets.csv' using PigStorage(',') as (
+Tweets = LOAD 'hdfs://master:54310/user/hduser/twitter/womensday/tweets' using PigStorage(',') as (
       id: chararray, 
       text: chararray, 
       created_at: chararray, 
@@ -43,4 +43,6 @@ Joined = JOIN UniqUsers BY id, UserIds BY user_id;
 Grouped = GROUP Joined By screen_name;
 Result = FOREACH Grouped GENERATE group as screen_name, COUNT(Joined) as qty;
 ResultSorted = ORDER Result BY qty DESC;
-STORE @ INTO '3_Abusive_tweets_volume';
+-- STORE @ INTO '3_Abusive_tweets_volume';
+Top10 = LIMIT ResultSorted 10;
+DUMP @;

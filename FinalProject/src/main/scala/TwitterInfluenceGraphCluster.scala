@@ -7,7 +7,7 @@ import org.apache.log4j._
 import org.apache.spark.rdd.RDD
 import org.apache.spark.graphx._
 
-object TwitterInfluenceGraph {
+object TwitterInfluenceGraphCluster {
 
   case class User(id: Long,
                   name: String,
@@ -115,13 +115,14 @@ object TwitterInfluenceGraph {
     // Set the log level to only print errors
     Logger.getLogger("org").setLevel(Level.ERROR)
 
-    // Create a SparkContext using every core of the local machine
-    val sc = new SparkContext("local[*]", "GraphX")
+    val conf = new SparkConf()
+    conf.setAppName("GraphXModule")
+    val sc = new SparkContext(conf)
 
     // Build up our vertices
-    val users = sc.textFile("../data/users.csv").flatMap(parseUsers).persist()
+    val users = sc.textFile("hdfs://master:54310/user/hduser/twitter/womensday/users").flatMap(parseUsers).persist()
 
-    val tweets = sc.textFile("../data/tweets.csv").flatMap(parseTweet)
+    val tweets = sc.textFile("hdfs://master:54310/user/hduser/twitter/womensday/tweets").flatMap(parseTweet)
 
     def makeVerts(user: User): (VertexId, User) = (user.id, user)
 

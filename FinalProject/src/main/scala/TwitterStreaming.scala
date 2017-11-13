@@ -9,7 +9,7 @@ import twitter4j.Status
 import twitter4j.User
 import twitter4j.Place
 
-object TweeterStreaming {
+object TwitterStreaming {
 
   /** Makes sure only ERROR messages get logged to avoid log spam. */
   def setupLogging() = {
